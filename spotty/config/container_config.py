@@ -36,6 +36,10 @@ class ContainerConfig(object):
         return self._volume_mounts
 
     @property
+    def host_mounts(self) -> list:
+        return self._config['hostMounts']
+
+    @property
     def commands(self) -> str:
         return self._config['commands']
 

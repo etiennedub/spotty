@@ -47,12 +47,18 @@ def prepare_instance_template(ec2, instance_config: InstanceConfig, docker_comma
 
     # set subnet
     if instance_config.subnet_id:
+        if instance_config.security_group:
+            security_group = [instance_config.security_group]
+            del template['Resources']['InstanceSecurityGroup']
+        else:
+            security_group = template['Resources']['InstanceLaunchTemplate']['Properties']['LaunchTemplateData'][
+                    'SecurityGroupIds']
+
         template['Resources']['InstanceLaunchTemplate']['Properties']['LaunchTemplateData']['NetworkInterfaces'] = [
             {
                 'SubnetId': instance_config.subnet_id,
                 'DeviceIndex': 0,
-                'Groups': template['Resources']['InstanceLaunchTemplate']['Properties']['LaunchTemplateData'][
-                    'SecurityGroupIds'],
+                'Groups': security_group,
             }]
         del template['Resources']['InstanceLaunchTemplate']['Properties']['LaunchTemplateData']['SecurityGroupIds']
 

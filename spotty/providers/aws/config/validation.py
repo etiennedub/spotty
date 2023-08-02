@@ -10,6 +10,7 @@ def validate_instance_parameters(params: dict):
         'region': And(str, Regex(r'^[a-z0-9-]+$')),
         Optional('availabilityZone', default=''): And(str, Regex(r'^[a-z0-9-]+$')),
         Optional('subnetId', default=''): And(str, Regex(r'^subnet-[a-z0-9]+$')),
+        Optional('securityGroup', default=''): And(str, Regex(r'^sg-[a-z0-9]+$')),
         'instanceType': str,
         Optional('spotInstance', default=False): bool,
         Optional('amiName', default=None): And(str, len, Regex(r'^[\w\(\)\[\]\s\.\/\'@-]{3,128}$')),

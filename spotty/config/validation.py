@@ -41,6 +41,27 @@ def validate_basic_config(data):
                 And(lambda x: not has_prefix([(volume['mountPath'] + '/') for volume in x]),
                     error='Volume mount paths cannot be prefixes for each other.'),
             )),
+            Optional('hostMounts', default=[]): (And(
+                [{
+                    'name': And(Or(int, str), Use(str), Regex(r'^[\w-]+$')),
+                    'mountPath': And(
+                        str,
+                        And(os.path.isabs, error='Use an absolute path when specifying a mount directory'),
+                        Use(lambda x: x.rstrip('/')),
+                    ),
+                    'hostPath': And(
+                        str,
+                        And(os.path.isabs, error='Use an absolute path when specifying a mount directory'),
+                        Use(lambda x: x.rstrip('/')),
+                    ),
+                }],
+                And(lambda x: is_unique_value(x, 'name'),
+                    error='Each volume mount must have a unique name.'),
+                And(lambda x: not has_prefix([(volume['mountPath'] + '/') for volume in x]),
+                    error='Volume mount paths cannot be prefixes for each other.'),
+                And(lambda x: not has_prefix([(volume['hostPath'] + '/') for volume in x]),
+                    error='Volume host paths cannot be prefixes for each other.'),
+            )),
             Optional('workingDir', default=''): And(str,
                                                     And(os.path.isabs,
                                                         error='Use an absolute path when specifying a '

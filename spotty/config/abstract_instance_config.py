@@ -40,6 +40,9 @@ class AbstractInstanceConfig(ABC):
         # get the host project directory
         self._host_project_dir = self._get_host_project_dir(self._volume_mounts)
 
+        # get container host mounts
+        self._volume_mounts = self._get_host_mounts(self._volume_mounts)
+
     @abstractmethod
     def _validate_instance_params(self, params: dict) -> dict:
         """Validates instance parameters and fill missing ones with the default values."""
@@ -180,6 +183,19 @@ class AbstractInstanceConfig(ABC):
             ))
 
         return volume_mounts
+
+    def _get_host_mounts(self, volume_mounts: List[VolumeMount]) -> List[VolumeMount]:
+        for container_volume in self.container_config.host_mounts:
+            volume_mounts.append(VolumeMount(
+                name=container_volume['name'],
+                host_path=container_volume['hostPath'],
+                mount_path=container_volume['mountPath'],
+                mode='rw',
+                hidden=True,
+            ))
+
+        return volume_mounts
+
 
     def _get_host_project_dir(self, volume_mounts: List[VolumeMount]) -> str:
         """Returns the host project directory."""
