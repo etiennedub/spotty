@@ -38,6 +38,15 @@ Resources:
                   - s3:DeleteObject
                 Resource:
                   - arn:aws:s3:::*
+        - PolicyName: StopInstancesEC2
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:StopInstances
+                Resource:
+                  - arn:aws:ec2:*:*:instance/*
 Outputs:
   ProfileArn:
     Value: !GetAtt InstanceProfile.Arn

@@ -25,6 +25,7 @@ class RunCommand(AbstractConfigCommand):
                                  'argument can be used multiple times to set several parameters. Parameters can be '
                                  'used in the script as Mustache variables (for example: {{PARAMETER}}).')
         parser.add_argument('--no-sync', action='store_true', help='Don\'t sync the project before running the script')
+        parser.add_argument('--shutdown', action='store_true', help='Run shutdown at the end. Only the VM will be shutdown, you still need to call `spotty stop` later.')
 
         # add the "double-dash" argument to the usage message
         parser.prog = 'spotty run'
@@ -58,7 +59,7 @@ class RunCommand(AbstractConfigCommand):
         script_command = get_script_command(script_name, script_content, script_args=args.custom_args,
                                             logging=args.logging)
         command = instance_manager.container_commands.exec(script_command, interactive=True, tty=True,
-                                                           user=args.user)
+                                                           user=args.user, shutdown=args.shutdown)
 
         # wrap the command with the tmux session
         if instance_manager.use_tmux:

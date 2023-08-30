@@ -68,7 +68,7 @@ class DockerCommands(AbstractContainerCommands):
         return 'docker rm -f "%s" > /dev/null' % self._instance_config.full_container_name
 
     def exec(self, command: str, interactive: bool = False, tty: bool = False, user: str = None,
-             container_name: str = None, working_dir: str = None) -> str:
+             container_name: str = None, working_dir: str = None, shutdown: bool = False) -> str:
         container_name = container_name if container_name else self._instance_config.full_container_name
         working_dir = working_dir if working_dir else self._instance_config.container_config.working_dir
 
@@ -88,6 +88,9 @@ class DockerCommands(AbstractContainerCommands):
             exec_cmd += ' -w ' + working_dir
 
         exec_cmd += ' %s %s' % (container_name, command)
+
+        if shutdown:
+            exec_cmd += ';aws ec2 stop-instances --instance-ids $(curl http://169.254.169.254/latest/meta-data/instance-id) --region $(curl http://169.254.169.254/latest/meta-data/placement/region)'
 
         # run "exec" command only if the container is running
         test_cmd = self.is_created(container_name, is_running=True)

@@ -13,5 +13,5 @@ class AbstractContainerCommands(ABC):
 
     @abstractmethod
     def exec(self, command: str, interactive: bool = False, tty: bool = False, user: str = None,
-             container_name: str = None, working_dir: str = None) -> str:
+             container_name: str = None, working_dir: str = None, shutdown: bool = False) -> str:
         raise NotImplementedError
